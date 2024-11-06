@@ -256,13 +256,25 @@ def person_tracking(video_path, model, message, person_only=True, save_video=Tru
 def process_message(message, model):
     """Process a single SQS message."""
     try:
-        # Parse message body - S3 notifications are nested in the message
+        # Parse message body
         message_body = json.loads(message['Body'])
         
-        # S3 event notifications are wrapped in 'Records'
-        s3_records = message_body['Records']
+        # Log the message body for debugging
+        logger.debug(f"Received message body: {json.dumps(message_body, indent=2)}")
+        
+        # Check if 'Records' key exists
+        if 'Records' not in message_body:
+            logger.warning("Message does not contain 'Records' key. Attempting to process as direct S3 event.")
+            s3_records = [message_body]  # Treat the entire message as a single record
+        else:
+            s3_records = message_body['Records']
         
         for record in s3_records:
+            # Check if this is an S3 event
+            if 's3' not in record:
+                logger.warning(f"Record does not contain S3 information: {json.dumps(record, indent=2)}")
+                continue
+            
             # Get bucket and key from the S3 event
             input_bucket = record['s3']['bucket']['name']
             input_key = record['s3']['object']['key']
@@ -283,7 +295,7 @@ def process_message(message, model):
             logger.info(f"Downloading video from s3://{input_bucket}/{input_key}")
             download_from_s3(input_bucket, input_key, local_input_path)
             
-            # Process video - passando a mensagem como parâmetro
+            # Process video - passing the message as a parameter
             logger.info("Processing video...")
             all_object_data, json_path, video_path = person_tracking(
                 local_input_path, model, message, person_only=True, save_video=True
@@ -311,6 +323,7 @@ def process_message(message, model):
     except Exception as e:
         logger.error(f"Error processing message: {str(e)}", exc_info=True)
         return False
+
 
 
 def main():
