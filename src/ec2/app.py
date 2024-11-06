@@ -124,7 +124,6 @@ def upload_to_s3(bucket, key, local_path):
         raise
 
 def change_format(results, ts, person_only):
-    # Set person_only to True if you only want to track persons, not other objects.
     try:
         object_json = []
         if not hasattr(results, 'boxes') or len(results.boxes) == 0:
@@ -158,12 +157,12 @@ def change_format(results, ts, person_only):
                                 "Top": float(top),
                                 "Width": float(width)
                             },
-                            "Index": int(obj.id) if hasattr(obj, 'id') else i  # Object index
+                            "Index": int(obj.id) if hasattr(obj, 'id') and obj.id is not None else i  # Object index
                         },
                         "Timestamp": ts  # timestamp of the detected object
                     }
                     object_json.append(obj_data)
-            except (IndexError, AttributeError) as e:
+            except (IndexError, AttributeError, ValueError, TypeError) as e:
                 logger.error(f"Error processing object {i}: {str(e)}", exc_info=True)
                 continue
 
