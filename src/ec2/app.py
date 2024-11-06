@@ -125,9 +125,8 @@ def upload_to_s3(bucket, key, local_path):
 
 def change_format(results, ts, person_only):
     #set person_only to True if you only want to track persons, not other objects.
-    object_json = []
-
     try:
+        object_json = []
         for i, obj in enumerate(results.boxes):
             x_center, y_center, width, height = obj.xywhn[0]
             # Calculate Left and Top from center
@@ -249,7 +248,7 @@ def process_message(message, model):
             logger.info(f"Processing video from bucket: {input_bucket}, key: {input_key}")
             
             # Set up local paths
-            local_input_path = f'/tmp/input_video_{int(time.time())}_{input_key.split("/")[-1]}'
+            local_input_path = f'/tmp/input_video_{int(time.time())}_{input_key.split('/')[-1]}'
             if not os.path.exists('/tmp'):
                 os.makedirs('/tmp')
             
