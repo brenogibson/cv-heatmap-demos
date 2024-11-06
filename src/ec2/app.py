@@ -252,7 +252,7 @@ def process_message(message, model):
             logger.info(f"Processing video from bucket: {input_bucket}, key: {input_key}")
             
             # Set up local paths
-            local_input_path = f'/tmp/input_video_{int(time.time())}_{input_key.split('/')[-1]}'
+            local_input_path = f'/tmp/input_video_{int(time.time())}_{input_key.split("/")[-1]}'
             if not os.path.exists('/tmp'):
                 os.makedirs('/tmp')
             
