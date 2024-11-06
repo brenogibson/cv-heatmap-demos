@@ -144,6 +144,9 @@ def change_format(results, ts, person_only):
                     logger.warning(f"Object {i} has no 'cls' attribute")
                     continue
                 
+                # Get the class name
+                class_id = int(obj.cls[0])
+                obj_name = results.names[class_id]
                 
                 # Create dictionary for each object detected
                 if (person_only and obj_name == "person") or not person_only:
@@ -168,6 +171,7 @@ def change_format(results, ts, person_only):
     except Exception as e:
         logger.error(f"Error in change_format: {str(e)}", exc_info=True)
         raise
+
 
 
 def person_tracking(video_path, model, message, person_only=True, save_video=True):
