@@ -203,14 +203,18 @@ def person_tracking(video_path, model, message, person_only=True, save_video=Tru
                 break
 
         # Save outputs
-        output_json_path = f'/tmp/{file_name}_output.json'
+        output_json_path = f'./tmp/{file_name}_output.json'
+        # Create /tmp directory if it doesn't exist
+        os.makedirs(os.path.dirname(output_json_path), exist_ok=True)
         with open(output_json_path, 'w') as file:
             json.dump(all_object_data, file, indent=4)
         logger.info(f"JSON output saved to {output_json_path}")
        
         if save_video:
             fourcc = cv2.VideoWriter_fourcc(*'mp4v')
-            output_path = f"/tmp/{file_name}_annotated.mp4"
+            output_path = f"./tmp/{file_name}_annotated.mp4"
+            # Create ./tmp directory if it doesn't exist
+            os.makedirs(os.path.dirname(output_path), exist_ok=True)
             fps = reader.get_meta_data()['fps']
             frame_size = reader.get_meta_data()['size']
             video_writer = cv2.VideoWriter(output_path, fourcc, fps, frame_size)
