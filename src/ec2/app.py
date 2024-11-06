@@ -17,6 +17,10 @@ MAX_RETRIES = 3
 BASE_DELAY = 1
 MAX_DELAY = 30
 
+# get SQS queue uri from parameter store
+ssm = boto3.client('ssm', region_name='us-east-1')
+sqs_queue_url = ssm.get_parameter(Name='/video-analytics/newvideo-sqs')['Parameter']['Value']
+
 @backoff.on_exception(
     backoff.expo,
     (ConnectionError, ClientError),
@@ -24,6 +28,7 @@ MAX_DELAY = 30
     max_time=300,  # Maximum total time to try in seconds
     base=2,  # Base factor for exponential backoff
 )
+
 def receive_sqs_message(queue_url):
     """Receive message from SQS with exponential backoff retry."""
     return sqs.receive_message(
@@ -194,7 +199,7 @@ def person_tracking(video_path, model, message, person_only=True, save_video=Tru
             if current_time - last_visibility_extension >= visibility_extension_interval:
                 try:
                     extend_message_visibility(
-                        os.environ['SQS_QUEUE_URL'],
+                        sqs_queue_url,
                         message['ReceiptHandle'],
                         900  # 15 minutes
                     )
@@ -311,7 +316,7 @@ def process_message(message, model):
 def main():
     try:
         # Get SQS URL from environment variable
-        queue_url = os.environ['SQS_QUEUE_URL']
+        queue_url = sqs_queue_url
         
         # Check CUDA availability and set device
         device = check_cuda_availability()
