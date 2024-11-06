@@ -124,31 +124,46 @@ def upload_to_s3(bucket, key, local_path):
         raise
 
 def change_format(results, ts, person_only):
-    #set person_only to True if you only want to track persons, not other objects.
+    # Set person_only to True if you only want to track persons, not other objects.
     try:
         object_json = []
+        if not hasattr(results, 'boxes') or len(results.boxes) == 0:
+            logger.warning("No boxes found in results")
+            return object_json
+
         for i, obj in enumerate(results.boxes):
-            x_center, y_center, width, height = obj.xywhn[0]
-            # Calculate Left and Top from center
-            left = x_center - (width / 2)
-            top = y_center - (height / 2)
-            obj_name = results.names[int(obj.cls)]
-            # Create dictionary for each object detected
-            if (person_only and obj_name == "person") or not person_only:
-                obj_data = {
-                    obj_name: {
-                        "BoundingBox": {
-                            "Height": float(height),
-                            "Left": float(left),
-                            "Top": float(top),
-                            "Width": float(width)
+            try:
+                if len(obj.xywhn) == 0:
+                    continue
+                x_center, y_center, width, height = obj.xywhn[0]
+                # Calculate Left and Top from center
+                left = x_center - (width / 2)
+                top = y_center - (height / 2)
+                
+                if not hasattr(obj, 'cls'):
+                    logger.warning(f"Object {i} has no 'cls' attribute")
+                    continue
+                
+                
+                # Create dictionary for each object detected
+                if (person_only and obj_name == "person") or not person_only:
+                    obj_data = {
+                        obj_name: {
+                            "BoundingBox": {
+                                "Height": float(height),
+                                "Left": float(left),
+                                "Top": float(top),
+                                "Width": float(width)
+                            },
+                            "Index": int(obj.id) if hasattr(obj, 'id') else i  # Object index
                         },
-                        "Index": int(obj.id)  # Object index
-                    },
-                    "Timestamp": ts  # timestamp of the detected object
-                }
-            object_json.append(obj_data)
-        
+                        "Timestamp": ts  # timestamp of the detected object
+                    }
+                    object_json.append(obj_data)
+            except (IndexError, AttributeError) as e:
+                logger.error(f"Error processing object {i}: {str(e)}", exc_info=True)
+                continue
+
         return object_json
     except Exception as e:
         logger.error(f"Error in change_format: {str(e)}", exc_info=True)
