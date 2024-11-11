@@ -226,7 +226,7 @@ def person_tracking(video_path, model, message, person_only=True, save_video=Tru
                 break
 
         # Save outputs
-        output_json_path = f'./tmp/{file_name}_output.json'
+        output_json_path = f'./tmp/{file_name}.json'
         # Create /tmp directory if it doesn't exist
         os.makedirs(os.path.dirname(output_json_path), exist_ok=True)
         with open(output_json_path, 'w') as file:
