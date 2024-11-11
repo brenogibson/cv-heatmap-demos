@@ -303,7 +303,7 @@ def process_message(message, model):
             
             # Upload results to S3 (using same bucket as input)
             logger.info("Uploading results to S3...")
-            output_json_key = f"output/{Path(input_key).stem}_output.json"
+            output_json_key = f"output/{Path(input_key).stem}.json"
             output_video_key = f"output/{Path(input_key).stem}_annotated.mp4"
             
             upload_to_s3(input_bucket, output_json_key, json_path)
