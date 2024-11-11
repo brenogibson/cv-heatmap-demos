@@ -215,7 +215,7 @@ def person_tracking(video_path, model, message, person_only=True, save_video=Tru
                 results = model.track(frame_bgr, persist=True, conf=conf, iou=iou, show=False, tracker="bytetrack.yaml")
 
                 object_json = change_format(results[0], i, person_only)
-                all_object_data += object_json
+                all_object_data.append(object_json)
 
                 annotated_frame = results[0].plot()
                 frames.append(annotated_frame)
@@ -229,6 +229,8 @@ def person_tracking(video_path, model, message, person_only=True, save_video=Tru
         output_json_path = f'./tmp/{file_name}.json'
         # Create /tmp directory if it doesn't exist
         os.makedirs(os.path.dirname(output_json_path), exist_ok=True)
+        flat_data = [item for sublist in all_object_data for item in sublist]
+
         with open(output_json_path, 'w') as file:
             json.dump(all_object_data, file, indent=4)
         logger.info(f"JSON output saved to {output_json_path}")
