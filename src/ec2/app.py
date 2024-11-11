@@ -156,15 +156,15 @@ def change_format(results, ts, person_only):
                 if (person_only and obj_name == "person") or not person_only:
                     obj_data = {
                         obj_name: {
-                            "BoundingBox": {
-                                "Height": float(height),
-                                "Left": float(left),
-                                "Top": float(top),
-                                "Width": float(width)
+                            "boundingBox": {
+                                "height": float(height),
+                                "left": float(left),
+                                "top": float(top),
+                                "width": float(width)
                             },
-                            "Index": int(obj.id) if hasattr(obj, 'id') and obj.id is not None else i  # Object index
+                            "index": int(obj.id) if hasattr(obj, 'id') and obj.id is not None else i  # Object index
                         },
-                        "Timestamp": ts  # timestamp of the detected object
+                        "timestamp": ts  # timestamp of the detected object
                     }
                     object_json.append(obj_data)
             except (IndexError, AttributeError, ValueError, TypeError) as e:
