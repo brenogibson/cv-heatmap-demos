@@ -18,7 +18,7 @@ BASE_DELAY = 1
 MAX_DELAY = 30
 
 # get SQS queue uri from parameter store
-ssm = boto3.client('ssm', region_name='us-east-1')
+ssm = boto3.client('ssm', region_name='us-west-2')
 sqs_queue_url = ssm.get_parameter(Name='/video-analytics/newvideo-sqs')['Parameter']['Value']
 
 @backoff.on_exception(
@@ -77,8 +77,8 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 # Initialize AWS clients
-sqs = boto3.client('sqs', region_name='us-east-1')
-s3 = boto3.client('s3', region_name='us-east-1')
+sqs = boto3.client('sqs', region_name='us-west-2')
+s3 = boto3.client('s3', region_name='us-west-2')
 
 def check_cuda_availability():
     """Check if CUDA is available and return device configuration."""
