@@ -166,7 +166,7 @@ def change_format(results, ts, person_only):
                         },
                         "timestamp": ts  # timestamp of the detected object
                     }
-                    object_json.append(obj_data)
+                    object_json = obj_data
             except (IndexError, AttributeError, ValueError, TypeError) as e:
                 logger.error(f"Error processing object {i}: {str(e)}", exc_info=True)
                 continue
@@ -215,7 +215,7 @@ def person_tracking(video_path, model, message, person_only=True, save_video=Tru
                 results = model.track(frame_bgr, persist=True, conf=conf, iou=iou, show=False, tracker="bytetrack.yaml")
 
                 object_json = change_format(results[0], i, person_only)
-                all_object_data.append(object_json)
+                all_object_data += object_json
 
                 annotated_frame = results[0].plot()
                 frames.append(annotated_frame)
