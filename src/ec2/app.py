@@ -135,6 +135,9 @@ def change_format(results, timestamp, person_only):
             logger.warning("No boxes found in results")
             return object_json
 
+        # Convert timestamp to milliseconds
+        timestamp_ms = int(timestamp * 1000)  # Convert seconds to milliseconds
+
         for i, obj in enumerate(results.boxes):
             try:
                 if len(obj.xywhn) == 0:
@@ -164,7 +167,7 @@ def change_format(results, timestamp, person_only):
                             },
                             "index": int(obj.id) if hasattr(obj, 'id') and obj.id is not None else i
                         },
-                        "timestamp": format_timestamp(timestamp)  # Format timestamp appropriately
+                        "timestamp": timestamp_ms  # Store timestamp as milliseconds (integer)
                     }
                     object_json = obj_data
             except (IndexError, AttributeError, ValueError, TypeError) as e:
@@ -175,6 +178,7 @@ def change_format(results, timestamp, person_only):
     except Exception as e:
         logger.error(f"Error in change_format: {str(e)}", exc_info=True)
         raise
+
 
 def format_timestamp(timestamp):
     """
