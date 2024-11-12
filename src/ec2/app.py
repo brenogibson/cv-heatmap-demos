@@ -210,7 +210,7 @@ def person_tracking(video_path, model, message, person_only=True, save_video=Tru
 
             frame_bgr = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
             try:
-                conf = 0.2
+                conf = 0.4
                 iou = 0.5
                 results = model.track(frame_bgr, persist=True, conf=conf, iou=iou, show=False, tracker="bytetrack.yaml", classes=[0])  # 0 is the class ID for person
 
