@@ -169,7 +169,7 @@ def change_format(results, timestamp, person_only):
                         },
                         "timestamp": timestamp_ms  # Store timestamp as milliseconds (integer)
                     }
-                    object_json = obj_data
+                    object_json.append(obj_data)  # Append instead of assign
             except (IndexError, AttributeError, ValueError, TypeError) as e:
                 logger.error(f"Error processing object {i}: {str(e)}", exc_info=True)
                 continue
@@ -178,6 +178,7 @@ def change_format(results, timestamp, person_only):
     except Exception as e:
         logger.error(f"Error in change_format: {str(e)}", exc_info=True)
         raise
+
 
 
 def format_timestamp(timestamp):
@@ -226,7 +227,7 @@ def person_tracking(video_path, model, message, person_only=True, save_video=Tru
 
             frame_bgr = cv2.cvtColor(frame, cv2.COLOR_RGB2BGR)
             try:
-                conf = 0.4
+                conf = 0.25
                 iou = 0.5
                 results = model.track(frame_bgr, persist=True, conf=conf, iou=iou, show=False, tracker="bytetrack.yaml", classes=[0])  # 0 is the class ID for person
 
@@ -246,10 +247,14 @@ def person_tracking(video_path, model, message, person_only=True, save_video=Tru
         output_json_path = f'./tmp/{file_name}.json'
         # Create /tmp directory if it doesn't exist
         os.makedirs(os.path.dirname(output_json_path), exist_ok=True)
-        flat_data = [item for sublist in all_object_data for item in sublist]
+        
+        # Flatten the data structure if needed
+        flat_data = []
+        for frame_data in all_object_data:
+            flat_data.extend(frame_data)
 
         with open(output_json_path, 'w') as file:
-            json.dump(all_object_data, file, indent=4)
+            json.dump(flat_data, file, indent=4)  # Save flattened data
         logger.info(f"JSON output saved to {output_json_path}")
        
         if save_video:
