@@ -162,9 +162,9 @@ def change_format(results, ts, person_only):
                                 "top": float(top),
                                 "width": float(width)
                             },
-                            "index": int(obj.id) if hasattr(obj, 'id') and obj.id is not None else i  # Object index
+                            "index": int(obj.id) if hasattr(obj, 'id') and obj.id is not None else i
                         },
-                        "timestamp": ts  # timestamp of the detected object
+                        "timestamp": format_timestamp(timestamp)  # Format timestamp appropriately
                     }
                     object_json = obj_data
             except (IndexError, AttributeError, ValueError, TypeError) as e:
@@ -176,6 +176,14 @@ def change_format(results, ts, person_only):
         logger.error(f"Error in change_format: {str(e)}", exc_info=True)
         raise
 
+def format_timestamp(timestamp):
+    """
+    Format timestamp in a suitable format (e.g., HH:MM:SS.mmm)
+    """
+    hours = int(timestamp // 3600)
+    minutes = int((timestamp % 3600) // 60)
+    seconds = timestamp % 60
+    return f"{hours:02d}:{minutes:02d}:{seconds:06.3f}"
 
 
 def person_tracking(video_path, model, message, person_only=True, save_video=True):
@@ -185,7 +193,9 @@ def person_tracking(video_path, model, message, person_only=True, save_video=Tru
     logger.info(f"Starting person tracking for video: {video_path}")
     try:
         reader = imageio.get_reader(video_path)
+        fps = reader.get_meta_data()['fps']  # Get the FPS from video metadata
         frames = []
+        frame_count = 0
         i = 0
         all_object_data = []
         file_name = Path(video_path).stem
@@ -195,6 +205,8 @@ def person_tracking(video_path, model, message, person_only=True, save_video=Tru
         visibility_extension_interval = 300  # 5 minutes in seconds
 
         for frame in reader:
+            # Calculate actual timestamp in seconds
+            timestamp = frame_count / fps
             current_time = time.time()
             if current_time - last_visibility_extension >= visibility_extension_interval:
                 try:
@@ -214,16 +226,17 @@ def person_tracking(video_path, model, message, person_only=True, save_video=Tru
                 iou = 0.5
                 results = model.track(frame_bgr, persist=True, conf=conf, iou=iou, show=False, tracker="bytetrack.yaml", classes=[0])  # 0 is the class ID for person
 
-                object_json = change_format(results[0], i, person_only)
+                object_json = change_format(results[0], timestamp, person_only)  # Pass timestamp instead of frame_count
                 all_object_data.append(object_json)
 
                 annotated_frame = results[0].plot()
                 frames.append(annotated_frame)
-                i += 1
+                frame_count += 1
 
             except Exception as e:
-                logger.error(f"Error processing frame {i}: {str(e)}", exc_info=True)
+                logger.error(f"Error processing frame {frame_count}: {str(e)}", exc_info=True)
                 break
+
 
         # Save outputs
         output_json_path = f'./tmp/{file_name}.json'
