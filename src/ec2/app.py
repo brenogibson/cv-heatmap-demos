@@ -212,7 +212,7 @@ def person_tracking(video_path, model, message, person_only=True, save_video=Tru
             try:
                 conf = 0.2
                 iou = 0.5
-                results = model.track(frame_bgr, persist=True, conf=conf, iou=iou, show=False, tracker="bytetrack.yaml")
+                results = model.track(frame_bgr, persist=True, conf=conf, iou=iou, show=False, tracker="bytetrack.yaml", classes=[0])  # 0 is the class ID for person
 
                 object_json = change_format(results[0], i, person_only)
                 all_object_data.append(object_json)
