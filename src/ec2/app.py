@@ -128,7 +128,7 @@ def upload_to_s3(bucket, key, local_path):
         logger.error(f"Error uploading file to S3: {str(e)}", exc_info=True)
         raise
 
-def change_format(results, ts, person_only):
+def change_format(results, timestamp, person_only):
     try:
         object_json = []
         if not hasattr(results, 'boxes') or len(results.boxes) == 0:
