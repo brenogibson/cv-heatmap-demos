@@ -1,0 +1,278 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'CloudFormation template for Video Analytics Solution with EC2, S3, and SQS'
+
+Parameters:
+  InstanceType:
+    Type: String
+    Default: g6.8xlarge
+    Description: EC2 instance type (GPU instance recommended)
+  KeyName:
+    Type: AWS::EC2::KeyPair::KeyName
+    Default: video-analytics-key-pair
+    Description: Name of an existing EC2 KeyPair
+  BucketName:
+    Type: String
+    Description: Name for the S3 bucket
+    Default: video-analytics-bucket
+  QueueName:
+    Type: String
+    Description: Name of the SQS Queue
+    Default: video-analytics-queue
+
+Resources:
+  # EC2 Key Pair
+  VideoAnalyticsKeyPair:
+    Type: AWS::EC2::KeyPair
+    Properties:
+      KeyName: video-analytics-key-pair
+
+  # SQS Queue Configuration
+  VideoAnalyticsQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: !Ref QueueName
+      VisibilityTimeout: 3600
+      MessageRetentionPeriod: 345600
+
+  VideoAnalyticsQueuePolicy:
+    Type: AWS::SQS::QueuePolicy
+    Properties:
+      Queues:
+        - !Ref VideoAnalyticsQueue
+      PolicyDocument:
+        Version: "2012-10-17"
+        Statement:
+          - Sid: "AllowS3ToSendMessage"
+            Effect: Allow
+            Principal:
+              Service: "s3.amazonaws.com"
+            Action: "sqs:SendMessage"
+            Resource: !GetAtt VideoAnalyticsQueue.Arn
+          - Sid: "__owner_statement"
+            Effect: Allow
+            Principal:
+              AWS: !Sub "${AWS::AccountId}"
+            Action: "SQS:*"
+            Resource: !GetAtt VideoAnalyticsQueue.Arn
+
+  # S3 Bucket Configuration
+  VideoAnalyticsBucket:
+    Type: AWS::S3::Bucket
+    DependsOn: VideoAnalyticsQueuePolicy
+    Properties:
+      BucketName: 
+        Fn::Join:
+          - '-'
+          - - !Ref BucketName
+            - !Ref 'AWS::AccountId'
+      VersioningConfiguration:
+        Status: Enabled
+      PublicAccessBlockConfiguration:
+        BlockPublicAcls: true
+        BlockPublicPolicy: true
+        IgnorePublicAcls: true
+        RestrictPublicBuckets: true
+      NotificationConfiguration:
+        QueueConfigurations:
+          - Event: s3:ObjectCreated:*
+            Queue: !GetAtt VideoAnalyticsQueue.Arn
+
+  # Lambda function to create input folder
+  CreateInputFolderFunction:
+    Type: AWS::Lambda::Function
+    Properties:
+      Handler: index.handler
+      Role: !GetAtt LambdaExecutionRole.Arn
+      Code:
+        ZipFile: |
+          import boto3
+          import cfnresponse
+          def handler(event, context):
+            s3 = boto3.client('s3')
+            try:
+              bucket = event['ResourceProperties']['BucketName']
+              s3.put_object(Bucket=bucket, Key='input/')
+              cfnresponse.send(event, context, cfnresponse.SUCCESS, {})
+            except Exception as e:
+              print(e)
+              cfnresponse.send(event, context, cfnresponse.FAILED, {})
+      Runtime: python3.8
+      Timeout: 60
+
+  LambdaExecutionRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: lambda.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/service-role/AWSLambdaBasicExecutionRole
+      Policies:
+        - PolicyName: S3Access
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action: 's3:PutObject'
+                Resource: !Sub 'arn:aws:s3:::${VideoAnalyticsBucket}/*'
+
+  CreateInputFolder:
+    Type: Custom::CreateInputFolder
+    Properties:
+      ServiceToken: !GetAtt CreateInputFolderFunction.Arn
+      BucketName: !Ref VideoAnalyticsBucket
+
+  # S3 Bucket Policies
+  BucketPolicy:
+    Type: AWS::S3::BucketPolicy
+    Properties:
+      Bucket: !Ref VideoAnalyticsBucket
+      PolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Sid: AllowEC2Access
+            Effect: Allow
+            Principal:
+              AWS: !GetAtt VideoAnalyticsRole.Arn
+            Action:
+              - 's3:GetObject'
+              - 's3:PutObject'
+              - 's3:ListBucket'
+              - 's3:DeleteObject'
+            Resource: 
+              - !Sub 'arn:aws:s3:::${VideoAnalyticsBucket}'
+              - !Sub 'arn:aws:s3:::${VideoAnalyticsBucket}/*'
+          - Sid: DenyInsecureConnections
+            Effect: Deny
+            Principal: '*'
+            Action: 's3:*'
+            Resource: !Sub 'arn:aws:s3:::${VideoAnalyticsBucket}/*'
+            Condition:
+              Bool:
+                'aws:SecureTransport': false
+
+  # IAM Role Configuration
+  VideoAnalyticsRole:
+    Type: AWS::IAM::Role
+    Properties:
+      AssumeRolePolicyDocument:
+        Version: '2012-10-17'
+        Statement:
+          - Effect: Allow
+            Principal:
+              Service: ec2.amazonaws.com
+            Action: sts:AssumeRole
+      ManagedPolicyArns:
+        - arn:aws:iam::aws:policy/AmazonSSMManagedInstanceCore
+      Policies:
+        - PolicyName: VideoAnalyticsAccess
+          PolicyDocument:
+            Version: '2012-10-17'
+            Statement:
+              - Effect: Allow
+                Action:
+                  - sqs:ReceiveMessage
+                  - sqs:DeleteMessage
+                  - sqs:GetQueueUrl
+                  - sqs:ChangeMessageVisibility
+                Resource: !GetAtt VideoAnalyticsQueue.Arn
+              - Effect: Allow
+                Action:
+                  - s3:GetObject
+                  - s3:PutObject
+                  - s3:ListBucket
+                  - s3:DeleteObject
+                Resource: 
+                  - !Sub 'arn:aws:s3:::${VideoAnalyticsBucket}/*'
+                  - !Sub 'arn:aws:s3:::${VideoAnalyticsBucket}'
+              - Effect: Allow
+                Action:
+                  - ssm:GetParameter
+                Resource: '*'
+
+  VideoAnalyticsInstanceProfile:
+    Type: AWS::IAM::InstanceProfile
+    Properties:
+      Path: "/"
+      Roles:
+        - !Ref VideoAnalyticsRole
+
+  # Security Group Configuration
+  VideoAnalyticsSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Security group for Video Analytics EC2
+      SecurityGroupIngress:
+        - IpProtocol: tcp
+          FromPort: 22
+          ToPort: 22
+          CidrIp: 0.0.0.0/0
+
+  # EC2 Instance Configuration
+  VideoAnalyticsInstance:
+    Type: AWS::EC2::Instance
+    Properties:
+      InstanceType: !Ref InstanceType
+      ImageId: ami-0ffc02858099cea63
+      KeyName: !Ref KeyName
+      IamInstanceProfile: !Ref VideoAnalyticsInstanceProfile
+      SecurityGroups:
+        - !Ref VideoAnalyticsSecurityGroup
+      BlockDeviceMappings:
+        - DeviceName: /dev/xvda
+          Ebs:
+            VolumeSize: 100
+            VolumeType: gp3
+      UserData:
+        Fn::Base64: !Sub |
+          #!/bin/bash
+          cd /home/ubuntu
+          sudo apt-get update 
+          sudo apt install -y python3 unzip python3-pip 
+          sudo apt-get install -y ffmpeg libsm6 libxext6
+          git clone https://github.com/aws-solutions-library-samples/guidance-for-retail-video-analytics-on-aws.git
+          cd guidance-for-retail-video-analytics-on-aws/source/ec2
+          pip3 install -r requirements.txt --break-system-packages
+          curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+          unzip awscliv2.zip
+          sudo ./aws/install
+          python3 app.py
+
+  # Parameter Store Configuration
+  VideoAnalyticsSQSParameter:
+    Type: AWS::SSM::Parameter
+    Properties:
+      Name: '/video-analytics/newvideo-sqs'
+      Type: String
+      Value: !Ref VideoAnalyticsQueue
+      Description: SQS URL for Video Analytics new video notifications
+
+Outputs:
+  InstanceId:
+    Description: EC2 Instance ID
+    Value: !Ref VideoAnalyticsInstance
+  BucketName:
+    Description: Name of created S3 bucket
+    Value: !Ref VideoAnalyticsBucket
+  BucketARN:
+    Description: ARN of created S3 bucket
+    Value: !GetAtt VideoAnalyticsBucket.Arn
+  QueueURL:
+    Description: URL of the created SQS Queue
+    Value: !Ref VideoAnalyticsQueue
+  QueueARN:
+    Description: ARN of the created SQS Queue
+    Value: !GetAtt VideoAnalyticsQueue.Arn
+  SQSParameterName:
+    Description: Name of the Parameter Store parameter for SQS URL
+    Value: '/video-analytics/newvideo-sqs'
+  InputFolderPath:
+    Description: Path to the input folder in the S3 bucket
+    Value: !Sub '${VideoAnalyticsBucket}/input/'
+  KeyPairName:
+    Description: Name of the created EC2 Key Pair
+    Value: !Ref VideoAnalyticsKeyPair
