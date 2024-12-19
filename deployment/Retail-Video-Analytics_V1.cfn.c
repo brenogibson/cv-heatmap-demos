@@ -234,7 +234,7 @@ Resources:
           sudo apt-get update 
           sudo apt install -y python3 unzip python3-pip 
           sudo apt-get install -y ffmpeg libsm6 libxext6
-          git clone https://github.com/aws-solutions-library-samples/guidance-for-retail-video-analytics-on-aws.git
+          git clone https://github.com/brenogibson/cv-heatmap-demos.git
           cd guidance-for-retail-video-analytics-on-aws/source/ec2
           pip3 install -r requirements.txt --break-system-packages
           curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
