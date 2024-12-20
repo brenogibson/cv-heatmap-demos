@@ -6,7 +6,7 @@ List the top-level sections of the README template, along with a hyperlink to th
 
 ### Required
 
-1. [Overview](#overview-required)
+1. [Overview](#overview)
     - [Cost](#cost)
 2. [Prerequisites](#prerequisites)
     - [Operating System](#operating-system)
