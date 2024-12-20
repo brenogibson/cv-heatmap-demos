@@ -1,0 +1,112 @@
+canvas#pathCanvas {
+    border: 2px solid rgb(255, 0, 0);
+    position: absolute;
+    left: 10px;
+    top: 10px;
+    z-index:1;
+  }
+
+div#videoContainer {
+  width:635;
+  height:360;
+}
+  video {
+    position: absolute;
+    left: 10px;
+    top: 10px;
+    z-index:-2;
+    width: 635;
+    height: 360;
+    object-fit: fill;
+  }
+  div#heatmap { 
+    position: absolute;
+    left: 10px;
+    top: 10px;
+    z-index:0;
+    background: rgba(0,0,0,0) !important;
+  }
+  .heatmap-canvas {
+    background: rgba(0,0,0,.2) !important;
+  }
+  .heatmap-shadow-canvas {
+    background: rgba(0,0,0,.2) !important;
+  }
+  div#slideContainer {
+    position: absolute;
+    left: 10px;
+    top: 355px;
+    width: 635px; /* Width of the outside container */
+    z-index:5;
+  }
+  
+  /* The slider itself */
+  .slider {
+    -webkit-appearance: none;  /* Override default CSS styles */
+    appearance: none;
+    width: 635px; /* Full-width */
+    height: 10px; /* Specified height */
+    background: #d3d3d3; /* Grey background */
+    z-index:5;
+  }
+  
+  /* Mouse-over effects */
+  .slider:hover {
+    opacity: 1; /* Fully shown on mouse-over */
+  }
+  
+  /* The slider handle (use -webkit- (Chrome, Opera, Safari, Edge) and -moz- (Firefox) to override default look) */
+  .slider::-webkit-slider-thumb {
+    -webkit-appearance: none; /* Override default look */
+    appearance: none;
+    width: 10px; /* Set a specific slider handle width */
+    height: 10px; /* Slider handle height */
+    background: #04AA6D; /* Green background */
+    cursor: pointer; /* Cursor on hover */
+  }
+  
+  .slider::-moz-range-thumb {
+    width: 10px; /* Set a specific slider handle width */
+    height: 10px; /* Slider handle height */
+    background: #04AA6D; /* Green background */
+    cursor: pointer; /* Cursor on hover */
+  }
+
+  #heatmapSlider {
+    -webkit-appearance: inherit;
+    appearance: inherit;
+    border-radius: 8px;
+    background: linear-gradient(to right, #ff0000 0 10%, #eeff33 70%, #99ff33 100%);
+    border-right-width: 0;
+    border-left-width: 0;
+    width: 128px;
+    height: 20px;
+    margin-top: 12px;
+  }
+  #heatmapSlider::-moz-range-thumb {
+    appearance: none;
+    width: 16px;
+    height: 16px;
+    background-image: url("../svg/thermometer-sun.svg");
+  }
+  #heatmapSlider::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    appearance: none;
+    cursor: pointer; /* Cursor on hover */
+    width: 16px;
+    height: 16px;
+    background-image: url("../svg/thermometer-sun.svg");
+  }
+  #heatmapSlider:hover {
+    opacity: 1; 
+  }
+
+  div#buttonsContainer{
+    position: absolute;
+    left: 10px;
+    top: 375px;
+    margin-left: 60px;
+    z-index:3;
+  }
+
+
