@@ -55,6 +55,8 @@ Resources:
   VideoAnalyticsBucket:
     Type: AWS::S3::Bucket
     DependsOn: VideoAnalyticsQueuePolicy
+    DeletionPolicy: Delete
+    UpdateReplacePolicy: Delete
     Properties:
       BucketName: 
         Fn::Join:
@@ -77,6 +79,15 @@ Resources:
                 Rules:
                   - Name: prefix
                     Value: input/
+      LifecycleConfiguration:
+        Rules:
+          - Id: DeleteEverythingRule
+            Status: Enabled
+            ExpirationInDays: 1
+            NoncurrentVersionExpirationInDays: 1
+            AbortIncompleteMultipartUpload:
+              DaysAfterInitiation: 1
+
 
   # Lambda function to create input folder
   CreateInputFolderFunction:
