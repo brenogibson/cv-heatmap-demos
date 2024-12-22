@@ -6,10 +6,6 @@ Parameters:
     Type: String
     Default: g6.8xlarge
     Description: EC2 instance type (GPU instance recommended)
-  KeyName:
-    Type: AWS::EC2::KeyPair::KeyName
-    Default: video-analytics-key-pair
-    Description: Name of an existing EC2 KeyPair
   BucketName:
     Type: String
     Description: Name for the S3 bucket
@@ -24,7 +20,7 @@ Resources:
   VideoAnalyticsKeyPair:
     Type: AWS::EC2::KeyPair
     Properties:
-      KeyName: video-analytics-key-pair
+      KeyName: !Sub '${AWS::StackName}-key-pair'
 
   # SQS Queue Configuration
   VideoAnalyticsQueue:
@@ -215,10 +211,11 @@ Resources:
   # EC2 Instance Configuration
   VideoAnalyticsInstance:
     Type: AWS::EC2::Instance
+    DependsOn: VideoAnalyticsKeyPair
     Properties:
       InstanceType: !Ref InstanceType
       ImageId: ami-0ffc02858099cea63
-      KeyName: !Ref KeyName
+      KeyName: !Ref VideoAnalyticsKeyPair
       IamInstanceProfile: !Ref VideoAnalyticsInstanceProfile
       SecurityGroups:
         - !Ref VideoAnalyticsSecurityGroup
