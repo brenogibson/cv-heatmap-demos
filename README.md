@@ -101,6 +101,7 @@ This Guidance currently supports only the us-east-1 (N.Virginia) region.
    - Navigate to the AWS CloudFormation console in us-east-1 region
    - Choose [Create Stack](https://us-east-1.console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/create)
    - Upload the template file (`./deployment/Retail-Video-Analytics.cfn.yml`)
+   - Choose a name for the stack and proceed to create it
 
    The template deploys:
    - Amazon S3 bucket for video file storage
