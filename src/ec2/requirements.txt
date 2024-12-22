@@ -1,6 +1,0 @@
-boto3
-opencv-python-headless
-imageio[ffmpeg]
-ultralytics
-lapx>=0.5.2
-backoff
