@@ -17,7 +17,7 @@
 
 ## Overview 
 
-Retail Video Analytics uses existing retail store cameras to generate customer analytics through computer vision technology. Retailers across various segments recognize the benefits of Video Analytics to understand customer preferences, identify bottlenecks, and improve the in-store experience. This solution helps retailers derive powerful insights on in-store shopper behavior, similar to the detailed metrics they get from their online stores.
+Retail Video Analytics uses existing retail store cameras to generate customer analytics through computer vision. Retailers across various segments recognize the benefits of Video Analytics to understand customer preferences, identify bottlenecks, and improve the in-store experience. This solution helps retailers derive powerful insights on in-store shopper behavior, similar to the detailed metrics they get from their online stores.
 
 The solution collects video feeds from existing cameras in physical retail locations, performs inference either in the AWS Cloud or at the Edge, and anonymizes the inference data to create actionable intelligence about shopper activity and patterns. This allows retailers to:
 
@@ -32,9 +32,9 @@ Retailers can use these insights to identify peak shopping times and optimize st
 
 ### Cost 
 
-_You are responsible for the cost of the AWS services used while running this Guidance. As of November 2024, the cost for running this Guidance with the default settings in the US East (N. Virginia) Region is approximately $125 per month for processing 360 minutes of video._
+You are responsible for the cost of the AWS services used while running this Guidance. As of December 2024, the cost for running this Guidance with the default settings in the US East (N. Virginia) Region is approximately $76 per month for processing 56 hours (8 hours per day, 7 days) of video.
 
-_We recommend creating a [Budget](https://docs.aws.amazon.com/cost-management/latest/userguide/budgets-managing-costs.html) through [AWS Cost Explorer](https://aws.amazon.com/aws-cost-management/aws-cost-explorer/) to help manage costs. Prices are subject to change. For full details, refer to the pricing webpage for each AWS service used in this Guidance._
+We recommend creating a [Budget](https://docs.aws.amazon.com/cost-management/latest/userguide/budgets-managing-costs.html) through [AWS Cost Explorer](https://aws.amazon.com/aws-cost-management/aws-cost-explorer/) to help manage costs. Prices are subject to change. For full details, refer to the pricing webpage for each AWS service used in this Guidance.
 
 ### Sample Cost Table 
 
@@ -48,19 +48,6 @@ The following table provides a sample cost breakdown for deploying this Guidance
 | **Total** | | **$76.04** |
 
 *Note: Calculations assume one week of security camera video processing (7 days × 8 hours per day) and an average of 1.5 GB storage per hour of video.*
-
-[Continue with remaining sections...]
-
-The improvements include:
-- Consistent formatting and spacing
-- Better list formatting
-- Improved table formatting
-- Removed redundant text
-- Fixed grammatical errors
-- More consistent capitalization
-- Better organization of information
-- Clearer cost breakdown presentation
-
 
 ## Prerequisites
 
@@ -78,18 +65,35 @@ To deploy the front-end application locally, you need:
 - Java Runtime Environment
 - AWS CLI 2.0 configured with credentials for S3 bucket read access
 
-### Operating System 
+### Operating System Requirements
 
-This solution is optimized for **Ubuntu 22.04 - Deep Learning OSS Nvidia Driver AMI GPU PyTorch 2.5** EC2 instances. Deployment on other operating systems or instance families may require additional configuration.
+#### Backend (Video Processing)
+- **Recommended Environment:**
+  - EC2 instance with **Ubuntu 22.04 - Deep Learning OSS Nvidia Driver AMI GPU PyTorch 2.5**
+  - GPU acceleration for optimal performance
 
-The source code can run locally with:
-- Python 3.10 or later
-- Libraries listed in requirements.txt
-- Note: GPU acceleration significantly improves inference performance
+- **Local Development Requirements (Optional):**
+  - Python 3.10 or later
+  - Dependencies listed in `requirements.txt`
+  - Note: Processing performance will be significantly slower without GPU acceleration
 
-The front-end visualization application requires:
-- Linux or MacOS operating system
-- Can be deployed on EC2 as an alternative to local deployment
+#### Frontend (Visualization Application)
+- **System Requirements:**
+  - Operating System: Linux or MacOS
+  - Java Runtime Environment (JRE) 8 or later
+  - Web browser (Chrome, Firefox, or Safari recommended)
+
+- **Deployment Options:**
+  1. Local Deployment:
+     - AWS CLI installed and configured
+     - S3 bucket read permissions
+  
+  2. EC2 Deployment:
+     - Instance Profile with S3 read permissions
+     - Public IP or DNS for access
+     - Optional: CloudFront distribution for content delivery
+
+Note: The backend and frontend can be deployed independently. The backend processes videos and stores results in S3, while the frontend reads from S3 to visualize the results.
 
 ### Supported Regions 
 
