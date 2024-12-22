@@ -1,7 +1,6 @@
 # Guidance for Retail Video Analytics on AWS
 
-## Table of Contents (required)
-
+## Table of Contents
 List the top-level sections of the README template, along with a hyperlink to the specific section.
 
 ### Required
