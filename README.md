@@ -99,7 +99,7 @@ This Guidance currently supports only the us-east-1 (N.Virginia) region.
 1. **CloudFormation Deployment**
    - Clone this repository
    - Navigate to the AWS CloudFormation console in us-east-1 region
-   - Choose [Create Stack](https://us-east-1.console.aws.amazon.com/cloudformation/home?region=us-east-1)
+   - Choose [Create Stack](https://us-east-1.console.aws.amazon.com/cloudformation/home?region=us-east-1#/stacks/create)
    - Upload the template file (`./deployment/Retail-Video-Analytics.cfn.yml`)
 
    The template deploys:
