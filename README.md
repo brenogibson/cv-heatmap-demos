@@ -72,11 +72,6 @@ To deploy the front-end application locally, you need:
   - EC2 instance with **Ubuntu 22.04 - Deep Learning OSS Nvidia Driver AMI GPU PyTorch 2.5**
   - GPU acceleration for optimal performance
 
-- **Local Development Requirements (Optional):**
-  - Python 3.10 or later
-  - Dependencies listed in `requirements.txt`
-  - Note: Processing performance will be significantly slower without GPU acceleration
-
 #### Frontend (Visualization Application)
 - **System Requirements:**
   - Operating System: Linux or MacOS
@@ -97,7 +92,7 @@ Note: The backend and frontend can be deployed independently. The backend proces
 
 ### Supported Regions 
 
-This Guidance currently supports only the US-east-1 (N.Virginia) region.
+This Guidance currently supports only the us-east-1 (N.Virginia) region.
 
 ## Deployment Steps 
 
@@ -115,20 +110,14 @@ This Guidance currently supports only the US-east-1 (N.Virginia) region.
 2. **Web Interface Setup**
    - Install AWS CLI and configure credentials with S3 bucket read permissions
    - For EC2 deployment: Configure Instance Profile with appropriate S3 read permissions
-   - Navigate to `./source/webapp` for the web interface files
-
-3. **Application Deployment**
    - Install [Java](https://www.java.com/en/download/)
-   - Extract RetailVideoAnalytcs-HeatmapUI.zip
-   - Update `src/main/java/awsPrototype/metadatas/Constants.java`
-   - Set `DEFAULT_S3_BUCKET_NAME` to your bucket name
-
-4. **Start the Application**
+   - Open terminal and navigate to `./source/webapp`, then run
    ```bash
    bash host-start.sh <bucket-name>
    ```
+   - Example: `bash host-start.sh video-analytics-bucket-1234567890`
 
-5. **Access the Application**
+3. **Access the Application**
    - Local deployment: http://localhost:8080
    - EC2 deployment: Use the instance's public IP or DNS
 
