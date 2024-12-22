@@ -28,8 +28,8 @@ public class Constants {
     public static Region DEFAULT_S3_REGION = Region.US_EAST_1;
     public static Long DEFAULT_S3_MULTIPART_THRESHOLD = 16 * Constants.MB;
     public static Long DEFAULT_S3_MINIMUM_PART_SIZE = 10 * Constants.MB;
-    public static String DEFAULT_S3_BUCKET_NAME = "kvs-heatmap-demo";
-    public static String DEFAULT_S3_VIDEOS_PATH = "result/";
+    public static String DEFAULT_S3_BUCKET_NAME = "heatmap-demo";
+    public static String DEFAULT_S3_VIDEOS_PATH = "output/";
     public static Boolean DEFAULT_PRELOAD_S3_OBJECTS_ON_CACHE = false;
     public static Integer DEFAULT_S3_DELAY_START = 0;
     public static Integer DEFAULT_S3_CONTINUOUS_RECURRENCY = 15;
