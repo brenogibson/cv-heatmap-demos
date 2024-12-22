@@ -130,6 +130,8 @@ Resources:
   # S3 Bucket Policies
   BucketPolicy:
     Type: AWS::S3::BucketPolicy
+    DependsOn: VideoAnalyticsQueuePolicy
+    DeletionPolicy: Delete
     Properties:
       Bucket: !Ref VideoAnalyticsBucket
       PolicyDocument:
@@ -155,6 +157,7 @@ Resources:
             Condition:
               Bool:
                 'aws:SecureTransport': false
+
 
   # IAM Role Configuration
   VideoAnalyticsRole:
