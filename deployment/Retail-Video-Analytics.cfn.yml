@@ -72,6 +72,11 @@ Resources:
         QueueConfigurations:
           - Event: s3:ObjectCreated:*
             Queue: !GetAtt VideoAnalyticsQueue.Arn
+            Filter:
+              S3Key:
+                Rules:
+                  - Name: prefix
+                    Value: input/
 
   # Lambda function to create input folder
   CreateInputFolderFunction:
