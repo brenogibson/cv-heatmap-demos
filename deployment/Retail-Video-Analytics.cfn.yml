@@ -8,8 +8,8 @@ Parameters:
     Description: EC2 instance type (GPU instance recommended)
   KeyName:
     Type: AWS::EC2::KeyPair::KeyName
-    Default: video-analytics-key-pair
-    Description: Name of an existing EC2 KeyPair
+    Description: Name of an existing EC2 KeyPair (optional - a new one will be created)
+    Default: 'video-analytics-key-pair' 
   BucketName:
     Type: String
     Description: Name for the S3 bucket
@@ -218,7 +218,7 @@ Resources:
     Properties:
       InstanceType: !Ref InstanceType
       ImageId: ami-0ffc02858099cea63
-      KeyName: !Ref KeyName
+      KeyName: !Ref VideoAnalyticsKeyPair
       IamInstanceProfile: !Ref VideoAnalyticsInstanceProfile
       SecurityGroups:
         - !Ref VideoAnalyticsSecurityGroup
