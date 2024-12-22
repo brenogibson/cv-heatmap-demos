@@ -114,9 +114,12 @@ This Guidance currently supports only the us-east-1 (N.Virginia) region.
    - Install [Java](https://www.java.com/en/download/)
    - Open terminal and navigate to `./source/webapp`, then run
    ```bash
-   bash host-start.sh <bucket-name>
+   sudo chmod +x setup-bucket.sh 
+   sudo chmod +x host-start.sh 
+   bash setup-bucket.sh <bucket-name>
+   bash host-start.sh
    ```
-   - Example: `bash host-start.sh video-analytics-bucket-1234567890`
+   Depending on your permissions, it could be necessary to execute it as sudo, such as: `sudo bash setup-bucket.sh video-analytics-bucket-1234567890`
 
 3. **Access the Application**
    - Local deployment: http://localhost:8080
