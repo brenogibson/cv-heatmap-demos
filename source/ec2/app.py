@@ -334,6 +334,17 @@ def process_message(message, model):
             if video_path:
                 upload_to_s3(input_bucket, output_video_key, video_path)
             
+            # Move original file from input to output folder
+            output_original_key = f"output/{Path(input_key).name}"
+            s3_client = boto3.client('s3')
+            s3_client.copy_object(
+                Bucket=input_bucket,
+                CopySource={'Bucket': input_bucket, 'Key': input_key},
+                Key=output_original_key
+            )
+            s3_client.delete_object(Bucket=input_bucket, Key=input_key)
+            logger.info(f"Moved original file from {input_key} to {output_original_key}")
+            
             # Clean up local files
             os.remove(local_input_path)
             os.remove(json_path)
