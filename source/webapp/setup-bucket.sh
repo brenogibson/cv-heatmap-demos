@@ -40,4 +40,4 @@ fi
 # Remove backup file if everything succeeded
 rm "${FILE_PATH}.backup"
 
-mvn compile
+mvn install
