@@ -35,7 +35,7 @@ public class Constants {
     public static Integer DEFAULT_S3_CONTINUOUS_RECURRENCY = 15;
 
     public static Region DEFAULT_SQS_REGION = Region.US_EAST_1;
-    public static String DEFAULT_SQS_QUEUE_URL = "https://sqs.us-east-1.amazonaws.com/351691338195/heatmap-demo-rekognition-pp-results";
+    public static String DEFAULT_SQS_QUEUE_URL = "";
     public static Integer DEFAULT_SQS_WAIT_TIME = 20;
     public static Integer DEFAULT_SQS_DELAY_START = 5;
     public static Integer DEFAULT_SQS_CONTINUOUS_RECURRENCY = 5;
