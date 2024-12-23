@@ -151,7 +151,7 @@ public class S3Util {
                             System.out.println("Skipping cache pre-load (disabled by configuration)");
                         }
                         
-                    })
+                    });
                         System.err.println(String.format("Error downloading JSON file [%s] from bucket [%s]: %s - connection status: FAILED", 
                             jsonS3FilePath, Constants.DEFAULT_S3_BUCKET_NAME, error.getMessage()));
                         System.err.println(String.format("Error downloading object [%s] from the bucket [%s]: %s", jsonS3FilePath, Constants.DEFAULT_S3_BUCKET_NAME, error.getMessage()));
