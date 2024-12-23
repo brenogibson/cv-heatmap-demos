@@ -113,7 +113,7 @@ This Guidance currently supports only the us-east-1 (N.Virginia) region.
    - For EC2 deployment: Configure Instance Profile with appropriate S3 read permissions
    - Install [Java](https://www.java.com/en/download/)
    - Install [Maven](https://maven.apache.org/install.html)
-      `sudo apt install default-jre maven -y`
+      - If using an Ubuntu environment: `sudo apt install default-jre maven -y`
    - Open terminal and navigate to `./source/webapp`, then run
    ```bash
    sudo chmod +x setup-bucket.sh 
