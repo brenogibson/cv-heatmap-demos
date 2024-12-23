@@ -121,7 +121,8 @@ This Guidance currently supports only the us-east-1 (N.Virginia) region.
    bash setup-bucket.sh <bucket-name>
    bash host-start.sh
    ```
-   Depending on your permissions, it could be necessary to execute it as sudo, such as: `sudo bash setup-bucket.sh video-analytics-bucket-1234567890`
+   Depending on your permissions, it could be necessary to execute it as sudo, such as: 
+   `sudo bash setup-bucket.sh video-analytics-bucket-1234567890`
 
 3. **Access the Application**
    - Local deployment: http://localhost:8080
