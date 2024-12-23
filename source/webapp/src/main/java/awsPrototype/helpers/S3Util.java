@@ -136,7 +136,7 @@ public class S3Util {
                         System.out.println("JSON file downloaded successfully to: " + localJsonPath);
                         System.out.println("JSON file downloaded successfully");
                         // and then, if the two files has been downloaded ok, either pre-load the object on the cache or wait for the first usage
-                        if (Constants.DEFAULT_PRELOAD_S3_OBJECTS_ON_CACHE)
+                        if (Constants.DEFAULT_PRELOAD_S3_OBJECTS_ON_CACHE) {
                                 System.out.println("Pre-loading video file into cache (enabled by configuration): " + objectName);
                                 System.out.println("Pre-loading video file into cache: " + objectName);
                                 VideoFileUtil.getInstance().loadVideoFromFile(objectName);
@@ -146,6 +146,7 @@ public class S3Util {
                                     jsonS3FilePath, Constants.DEFAULT_S3_BUCKET_NAME, error.getMessage()));
                                 System.err.println(String.format("Error downloading object [%s] from the bucket [%s]: %s", jsonS3FilePath, Constants.DEFAULT_S3_BUCKET_NAME, error.getMessage()));
                                 this.connectionWithAWSIsOK = false;
+                        }
                         else {
                             System.out.println("Skipping cache pre-load (disabled by configuration)");
                         }
@@ -157,7 +158,6 @@ public class S3Util {
                         this.connectionWithAWSIsOK = false;
                         return null;
                     });
-                })
                 System.err.println(String.format("Error downloading video file [%s] from bucket [%s]: %s - connection status: FAILED", 
                     videoS3FilePath, Constants.DEFAULT_S3_BUCKET_NAME, error.getMessage()));
                 System.err.println(String.format("Error downloading object [%s] from the bucket [%s]: %s", videoS3FilePath, Constants.DEFAULT_S3_BUCKET_NAME, error.getMessage()));
