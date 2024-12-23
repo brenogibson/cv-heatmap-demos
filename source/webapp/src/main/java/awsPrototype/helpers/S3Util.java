@@ -24,11 +24,9 @@ public class S3Util {
     private final Timer timer;
     
     private S3Util() {
-            ProfileCredentialsProvider credentialsProvider = ProfileCredentialsProvider.builder().build();
-            LOGGER.info("Initializing S3 client with credentials: " + credentialsProvider.toString());
-            
-            s3Client = S3AsyncClient.builder()
-            .credentialsProvider(credentialsProvider)
+        // Use default credentials provider chain
+        s3Client = S3AsyncClient.builder()
+            .credentialsProvider(software.amazon.awssdk.auth.credentials.DefaultCredentialsProvider.create())
             .crossRegionAccessEnabled(true)
             .region(Constants.DEFAULT_S3_REGION)
             .multipartEnabled(true)
@@ -37,22 +35,22 @@ public class S3Util {
                 .minimumPartSizeInBytes(Constants.DEFAULT_S3_MINIMUM_PART_SIZE))
             .build();
             
-            LOGGER.info("S3 client initialized with region: " + Constants.DEFAULT_S3_REGION);
-            // check connection later
-            connectionWithAWSIsOK = false;
-            timer = new Timer();
-        }
+        LOGGER.info("S3 client initialized with region: " + Constants.DEFAULT_S3_REGION);
+        connectionWithAWSIsOK = false;
+        timer = new Timer();
+    }
+
     
-        public static S3Util getInstance() {
-            if (instance == null) 
-                synchronized(S3Util.class) {
-                    if (instance == null) {
-                        LOGGER.info("Creating new S3Util instance");
-                        instance = new S3Util();
-                    }
+    public static S3Util getInstance() {
+        if (instance == null) 
+            synchronized(S3Util.class) {
+                if (instance == null) {
+                    LOGGER.info("Creating new S3Util instance");
+                    instance = new S3Util();
                 }
-            return instance;
-        }
+            }
+        return instance;
+    }
     
     public void startAutoSync() {
         LOGGER.info("Starting auto sync with delay: " + Constants.DEFAULT_S3_DELAY_START + "s and recurrency: " + Constants.DEFAULT_S3_CONTINUOUS_RECURRENCY + "s");

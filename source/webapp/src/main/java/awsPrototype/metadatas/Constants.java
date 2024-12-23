@@ -31,7 +31,7 @@ public class Constants {
     public static String DEFAULT_S3_BUCKET_NAME = "heatmap-demo";
     public static String DEFAULT_S3_VIDEOS_PATH = "output/";
     public static Boolean DEFAULT_PRELOAD_S3_OBJECTS_ON_CACHE = false;
-    public static Integer DEFAULT_S3_DELAY_START = 0;
+    public static Integer DEFAULT_S3_DELAY_START = 1;
     public static Integer DEFAULT_S3_CONTINUOUS_RECURRENCY = 15;
 
     public static Region DEFAULT_SQS_REGION = Region.US_EAST_1;
