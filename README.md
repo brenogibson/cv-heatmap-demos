@@ -125,7 +125,7 @@ This Guidance currently supports only the us-east-1 (N.Virginia) region.
 
    `sudo bash setup-bucket.sh video-analytics-bucket-1234567890`
 
-3. **Access the Application**
+3. **Access the Application on your Browser**
    - Local deployment: http://localhost:8080
    - If deployed in EC2: Use the instance's public IP or DNS address
 
