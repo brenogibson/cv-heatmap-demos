@@ -112,6 +112,7 @@ This Guidance currently supports only the us-east-1 (N.Virginia) region.
    - Install AWS CLI and configure credentials with S3 bucket read permissions
    - For EC2 deployment: Configure Instance Profile with appropriate S3 read permissions
    - Install [Java](https://www.java.com/en/download/)
+   - Install [Maven](https://maven.apache.org/install.html)
    - Open terminal and navigate to `./source/webapp`, then run
    ```bash
    sudo chmod +x setup-bucket.sh 
