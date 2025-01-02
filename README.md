@@ -183,5 +183,5 @@ For feedback or questions, please use the repository's Issues tab.
 
 ## Authors
 
-- Sriharsh Adari (saadari@)
-- Breno Gibson Silva (brenos@)
+- Sriharsh Adari 
+- Breno Gibson Silva 
